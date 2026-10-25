@@ -3,166 +3,288 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Wheel of the Year</title>
 <style>
 * { box-sizing: border-box; }
-html,body { margin:0; background:#000; }
-body { font-family:Georgia,serif; color:#f2e5c9; }
-.widget { padding:22px 12px 26px; max-width:420px; margin:auto; }
-.heading { text-align:center; }
-.star { color:#d9b779; font-size:20px; }
-h1 { font-size:25px; font-weight:normal; margin:8px 0; }
+
+html, body {
+  margin: 0;
+  background: #000;
+  color: #f2e5c9;
+  font-family: Georgia, serif;
+}
+
+.widget {
+  width: 100%;
+  padding: 17px 10px 14px;
+}
+
+.heading {
+  text-align: center;
+}
+
+.ornament {
+  color: #d9b779;
+  font-size: 15px;
+}
+
+h1 {
+  font-size: 22px;
+  font-weight: normal;
+  margin: 5px 0;
+}
+
 .subtitle {
-  font:10px system-ui,sans-serif;
-  color:#b79b6c;
-  letter-spacing:2px;
-  text-transform:uppercase;
+  color: #b79b6c;
+  font: 9px system-ui, sans-serif;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
 }
-.divider { height:1px; background:#49391f; margin:20px 0; }
+
+.divider {
+  height: 1px;
+  background: #49391f;
+  margin: 13px 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+}
+
 .sabbat {
-  display:flex;
-  align-items:center;
-  gap:11px;
-  padding:12px 10px;
-  margin-bottom:8px;
-  border:1px solid #342a1b;
-  border-radius:12px;
-  background:#090806;
+  min-width: 0;
+  min-height: 94px;
+  padding: 9px 6px;
+  border: 1px solid #3a2d1a;
+  border-radius: 10px;
+  background: #0c0906;
+  text-align: center;
 }
+
 .sabbat.next {
-  border-color:#c9a15d;
-  background:#1b1409;
-  box-shadow:0 0 15px #b88d3922;
+  border-color: #c9a15d;
+  background: #1b1409;
+  box-shadow: 0 0 12px #b88d3922;
 }
+
 .symbol {
-  width:40px;
-  height:40px;
-  flex-shrink:0;
-  border:1px solid #66502e;
-  border-radius:50%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:21px;
-  background:#181208;
+  font-size: 19px;
+  line-height: 1.2;
+  margin-bottom: 3px;
 }
-.details { flex:1; min-width:0; }
-.name { font-size:17px; color:#f5e5c3; }
-.date { font-size:12px; color:#d1b17a; margin-top:3px; }
+
+.name {
+  color: #f5e5c3;
+  font-size: 14px;
+}
+
+.date {
+  color: #d1b17a;
+  font-size: 10px;
+  margin-top: 3px;
+}
+
 .meaning {
-  font-size:11px;
-  color:#a99a80;
-  margin-top:5px;
-  line-height:1.4;
+  color: #a99a80;
+  font-size: 9px;
+  line-height: 1.3;
+  margin-top: 5px;
 }
+
 .days {
-  text-align:right;
-  flex-shrink:0;
-  min-width:45px;
-  color:#e0bf84;
-  font-size:17px;
+  color: #e0bf84;
+  font-size: 11px;
+  margin-top: 5px;
 }
-.days small {
-  display:block;
-  color:#a99a80;
-  font:9px system-ui,sans-serif;
-  margin-top:4px;
+
+.next-label {
+  color: #e4bf79;
+  font: 8px system-ui, sans-serif;
+  letter-spacing: .5px;
+  margin-top: 5px;
 }
-.tag {
-  color:#e4bf79;
-  font:9px system-ui,sans-serif;
-  letter-spacing:1px;
-  margin-top:5px;
-  text-transform:uppercase;
-}
+
 .footer {
-  text-align:center;
-  color:#a88a57;
-  font-size:11px;
-  margin-top:20px;
+  text-align: center;
+  color: #a88a57;
+  font-size: 10px;
+  margin-top: 13px;
 }
 </style>
 </head>
+
 <body>
-<div class="widget">
+<main class="widget">
   <div class="heading">
-    <div class="star">✦ ☾ ✦</div>
+    <div class="ornament">✦ ☾ ✦</div>
     <h1>Wheel of the Year</h1>
     <div class="subtitle">eight turns of the sacred wheel</div>
   </div>
+
   <div class="divider"></div>
-  <div id="list"></div>
-  <div class="footer">☽ as the wheel turns, so do we ☾</div>
-</div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="footer">
+    ☽ as the wheel turns, so do we ☾
+  </div>
+</main>
 
 <script>
-const sabbats=[
-  {name:"Imbolc",month:2,day:1,symbol:"🕯️",meaning:"Renewal · Inspiration · Returning light"},
-  {name:"Ostara",month:3,day:20,symbol:"🌷",meaning:"Balance · Growth · New beginnings"},
-  {name:"Beltane",month:5,day:1,symbol:"🌸",meaning:"Love · Fertility · Celebration"},
-  {name:"Litha",month:6,day:21,symbol:"☀️",meaning:"Sunlight · Abundance · Vitality"},
-  {name:"Lughnasadh",month:8,day:1,symbol:"🌾",meaning:"Harvest · Gratitude · Prosperity"},
-  {name:"Mabon",month:9,day:22,symbol:"🍁",meaning:"Balance · Harvest · Reflection"},
-  {name:"Samhain",month:10,day:31,symbol:"🎃",meaning:"Ancestors · Remembrance · Transformation"},
-  {name:"Yule",month:12,day:21,symbol:"❄️",meaning:"Rest · Rebirth · Returning light"}
+const sabbats = [
+  {
+    name: "Imbolc",
+    month: 2,
+    day: 1,
+    symbol: "🕯️",
+    meaning: "Renewal · Inspiration"
+  },
+  {
+    name: "Ostara",
+    month: 3,
+    day: 20,
+    symbol: "🌷",
+    meaning: "Balance · Growth"
+  },
+  {
+    name: "Beltane",
+    month: 5,
+    day: 1,
+    symbol: "🌸",
+    meaning: "Love · Celebration"
+  },
+  {
+    name: "Litha",
+    month: 6,
+    day: 21,
+    symbol: "☀️",
+    meaning: "Sunlight · Abundance"
+  },
+  {
+    name: "Lughnasadh",
+    month: 8,
+    day: 1,
+    symbol: "🌾",
+    meaning: "Harvest · Gratitude"
+  },
+  {
+    name: "Mabon",
+    month: 9,
+    day: 22,
+    symbol: "🍁",
+    meaning: "Balance · Reflection"
+  },
+  {
+    name: "Samhain",
+    month: 10,
+    day: 31,
+    symbol: "🎃",
+    meaning: "Ancestors · Transformation"
+  },
+  {
+    name: "Yule",
+    month: 12,
+    day: 21,
+    symbol: "❄️",
+    meaning: "Rest · Rebirth"
+  }
 ];
 
-function londonDate(){
-  const parts=new Intl.DateTimeFormat("en-GB",{
-    timeZone:"Europe/London",
-    year:"numeric",month:"2-digit",day:"2-digit"
+function londonDate() {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/London",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
   }).formatToParts(new Date());
-  const get=t=>Number(parts.find(p=>p.type===t).value);
-  return {year:get("year"),month:get("month"),day:get("day")};
+
+  const get = type =>
+    Number(parts.find(p => p.type === type).value);
+
+  return {
+    year: get("year"),
+    month: get("month"),
+    day: get("day")
+  };
 }
 
-function render(){
-  const today=londonDate();
-  const start=Date.UTC(today.year,today.month-1,today.day);
-  const events=[];
+function render() {
+  const today = londonDate();
 
-  for(const s of sabbats){
-    for(const year of [today.year,today.year+1,today.year+2]){
-      const target=Date.UTC(year,s.month-1,s.day);
-      if(target>=start){
-        events.push({...s,year,target});
+  const start = Date.UTC(
+    today.year,
+    today.month - 1,
+    today.day
+  );
+
+  const events = [];
+
+  for (const sabbat of sabbats) {
+    for (const year of [today.year, today.year + 1, today.year + 2]) {
+      const target = Date.UTC(
+        year,
+        sabbat.month - 1,
+        sabbat.day
+      );
+
+      if (target >= start) {
+        events.push({
+          ...sabbat,
+          year,
+          target
+        });
       }
     }
   }
 
-  events.sort((a,b)=>a.target-b.target);
+  events.sort((a, b) => a.target - b.target);
 
-  const upcoming=events.slice(0,8);
-  const list=document.getElementById("list");
-  list.innerHTML="";
+  const upcoming = events.slice(0, 8);
+  const grid = document.getElementById("grid");
 
-  upcoming.forEach((s,i)=>{
-    const days=Math.round((s.target-start)/86400000);
-    const month=new Date(Date.UTC(s.year,s.month-1,1))
-      .toLocaleString("en-GB",{month:"long",timeZone:"UTC"});
+  grid.innerHTML = "";
 
-    const card=document.createElement("div");
-    card.className="sabbat"+(i===0?" next":"");
-    card.innerHTML=`
-      <div class="symbol">${s.symbol}</div>
-      <div class="details">
-        <div class="name">${s.name}</div>
-        <div class="date">${s.day} ${month} ${s.year}</div>
-        <div class="meaning">${s.meaning}</div>
-        ${i===0?'<div class="tag">✦ next celebration</div>':""}
+  upcoming.forEach((sabbat, index) => {
+    const days = Math.round(
+      (sabbat.target - start) / 86400000
+    );
+
+    const month = new Date(
+      Date.UTC(sabbat.year, sabbat.month - 1, 1)
+    ).toLocaleString("en-GB", {
+      month: "short",
+      timeZone: "UTC"
+    });
+
+    const card = document.createElement("div");
+
+    card.className =
+      "sabbat" + (index === 0 ? " next" : "");
+
+    card.innerHTML = `
+      <div class="symbol">${sabbat.symbol}</div>
+      <div class="name">${sabbat.name}</div>
+      <div class="date">
+        ${sabbat.day} ${month} ${sabbat.year}
       </div>
+      <div class="meaning">${sabbat.meaning}</div>
       <div class="days">
-        ${days}
-        <small>${days===1?"day":"days"}</small>
+        ${days} ${days === 1 ? "day" : "days"} away
       </div>
+      ${index === 0
+        ? '<div class="next-label">✦ NEXT SABBAT</div>'
+        : ''}
     `;
-    list.appendChild(card);
+
+    grid.appendChild(card);
   });
 }
 
 render();
-setInterval(render,60000);
+setInterval(render, 60000);
 </script>
 </body>
 </html>
